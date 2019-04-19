@@ -3,7 +3,7 @@
 <head>
 
   <meta charset='utf-8' />
-  <title> LA Time Series </title>
+  <title> km.L </title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <script src='https://api.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
   <link href='https://api.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
@@ -21,11 +21,19 @@
   <div id='map'></div>
 
   <div id='console'>
-    <h1>LA Time Series</h1>
+    <img src ='kmLABS_LOGOwhite.png' alt = 'km.L'
+                                 style = 'width:105px;height:32px;margin-top:5px;'>
     <!--legend -->
 
     <div class='session'>
-      <h2>Temperature &#8451;</h2>
+
+      <div id = 'CtoFconverter' class = 'CtoF'>
+        <h2>Temperature</h2>
+        <form style="display: inline-block">
+            <input  type="radio" name="CtoFbutton" value="celcius" checked> &deg;C
+            <input  type="radio" name="CtoFbutton" value="satellite"> &deg;F
+        </form>
+      </div>
 
       <div class = "scale">
         <div class = "color" style = "background: #fef0d9"></div>
@@ -37,24 +45,27 @@
 
 
       <div class='scale'>
-        <div class='tempLabel'>28</div>
-        <div class='tempLabel'>28.5</div>
-        <div class='tempLabel'>29</div>
-        <div class='tempLabel'>29.5</div>
-        <div class='tempLabel'>30</div>
+        <div id = 'tempClass1' class='tempLabel'>7</div>
+        <div id = 'tempClass2' class='tempLabel'>12</div>
+        <div id = 'tempClass3' class='tempLabel'>17</div>
+        <div id = 'tempClass4'class='tempLabel'>22</div>
+        <div id = 'tempClass5' class='tempLabel'>27</div>
       </div>
 
 
       <div class= 'scale'></div>
+
+
+
       <div class='session' id='sliderbar'>
-          <h2>Date: January <label id='active-timestamp'>1</label></h2>
+          <h2>June 1st, <label id='active-timestamp'>1</label>pm</h2>
           <input id='slider' class='sliderConst' type='range' min='0' max='4' step='1' value='0' />
           <!--<div class= 'scale'>-->
-            <div class='dataLabel'>Jan 1</div>
-            <div class='dataLabel'>Jan 2</div>
-            <div class='dataLabel'>Jan 3</div>
-            <div class='dataLabel'>Jan 4</div>
-            <div class='dataLabel'>Jan 5</div>
+            <div class='dataLabel'>1pm</div>
+            <div class='dataLabel'>2pm</div>
+            <div class='dataLabel'>3pm</div>
+            <div class='dataLabel'>4pm</div>
+            <div class='dataLabel'>5pm</div>
           </div>
       </div>
 
@@ -63,16 +74,14 @@
  			    <h3>Active Layer Cell Value: <label id='hover-cell'>N/A</label></h3>
  	    </div>
 
-      <div class='dynamicData' id='firstLayerValue'><h2>January 1: <label id='hover-cell-1'>N/A</label></h2><div class='movableBar' id='movableBar1'></div></div>
-      <div class='dynamicData' id='secondLayerValue'><h2>January 2: <label id='hover-cell-2'>N/A</label></h2><div class='movableBar' id='movableBar2'></div></div>
-      <div class='dynamicData' id='thirdLayerValue'><h2>January 3: <label id='hover-cell-3'>N/A</label></h2><div class='movableBar' id='movableBar3'></div></div>
-      <div class='dynamicData' id='fourthLayerValue'><h2>January 4: <label id='hover-cell-4'>N/A</label></h2><div class='movableBar' id='movableBar4'></div></div>
-      <div class='dynamicData' id='fifthLayerValue'><h2>January 5: <label id='hover-cell-5'>N/A</label></h2><div class='movableBar' id='movableBar5'></div></div>
+      <div class='dynamicData' id='firstLayerValue'><h2>1pm: &nbsp; <label id='hover-cell-1'>N/A</label></h2><div class='movableBar' id='movableBar1'></div></div>
+      <div class='dynamicData' id='secondLayerValue'><h2>2pm:  &nbsp;<label id='hover-cell-2'>N/A</label></h2><div class='movableBar' id='movableBar2'></div></div>
+      <div class='dynamicData' id='thirdLayerValue'><h2>3pm:  &nbsp;<label id='hover-cell-3'>N/A</label></h2><div class='movableBar' id='movableBar3'></div></div>
+      <div class='dynamicData' id='fourthLayerValue'><h2>4pm:  &nbsp;<label id='hover-cell-4'>N/A</label></h2><div class='movableBar' id='movableBar4'></div></div>
+      <div class='dynamicData' id='fifthLayerValue'><h2>5pm:  &nbsp;<label id='hover-cell-5'>N/A</label></h2><div class='movableBar' id='movableBar5'></div></div>
 
-      <!--    <svg id="svg1" width="35%" height="70%" display="inline">
-            <rect width="100%" height="100%" fill="green" />
-          </svg> -->
-    </div>
+</div>
+
     <div id = 'consoleControl'><div id = 'ccText' class = 'consoleControlText'>Hide</div></div>
 
   <script src="sources.js"></script>
@@ -96,20 +105,42 @@ map.on('load', function() {
 
   var layers = map.getStyle().layers;
   var layer_IDs = [];
-  var maxValue = 30.6; //this should change for each dataset
-  var minValue = 28; //this should change for each dataset
+  var maxValue = 32.8; //this should change for each dataset
+  var minValue = 9; //this should change for each dataset
   var barWidth = 100; //measured in px, should change if legend is changed
 
 
 
+//add 3-D
+var labelLayerId;
+  for (var i = 0; i < layers.length; i++) {
+      if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+          labelLayerId = layers[i].id;
+          break;
+        }
+}
+
+
    // Find the index of the first symbol layer in the map style
    var firstSymbolId;
+
+   firstSymbolId = 'waterway-label';
+   /* USE IF DIFFERENT BACKGROUND LAYER
+
    for (var i = 0; i < layers.length; i++) {
-       if (layers[i].type === 'symbol') {
+     console.log(layers[i].type);
+     console.log(layers[i].id);
+
+
+    if (layers[i].type === 'symbol') {
            firstSymbolId = layers[i].id;
            break;
        }
+
    };
+
+
+          */
 
 
     //load map sources
@@ -119,7 +150,6 @@ map.on('load', function() {
         map.addSource(id, obj)
       });
 
-
     //load map layers
     mapLayers.forEach(function(layer) {
         let obj = layer[0];
@@ -127,8 +157,44 @@ map.on('load', function() {
         layer_IDs.push(obj.id); //adds names of all layers to an array
       });
 
+
+
+      map.addLayer({
+        'id': '3d-buildings',
+        'source': 'composite',
+        'source-layer': 'building',
+        'filter': ['==', 'extrude', 'true'],
+        'type': 'fill-extrusion',
+        'minzoom': 15,
+        'light': {"intensity":0.5,"anchor":"viewport"},
+        'paint': {
+            'fill-extrusion-color': 'white',
+            // use an 'interpolate' expression to add a smooth transition effect to the
+            // buildings as the user zooms in
+            'fill-extrusion-height': [
+            "interpolate", ["linear"], ["zoom"],
+            15, 0,
+            15.05, ["get", "height"]
+            ],
+            'fill-extrusion-base': [
+            "interpolate", ["linear"], ["zoom"],
+            15, 0,
+            15.05, ["get", "min_height"]
+            ],
+            'fill-extrusion-opacity': 0.92,
+
+            }
+      }, firstSymbolId);
+
+
+
     //makes first layer visible at start
-    map.setPaintProperty(layer_IDs[0], 'fill-opacity', 0.65);
+    map.setPaintProperty(layer_IDs[0], 'fill-opacity',0.65);
+
+
+    //STILL NEED TO MAKE BUILDING LAYER CORRECT COLOR AT START
+
+
 
     //Changes the layer visible via slider and sets a new active-timestamp
     document.getElementById('slider').addEventListener('input', function(e) {
@@ -136,15 +202,72 @@ map.on('load', function() {
         var selected_layer = "time-series" + (time_selection + 1); //selected_layer gets layer ID
         var active_layer = 'time-series' + document.getElementById('active-timestamp').innerText; // layer that is completely visible
 
+
+
         for (var i = 0; i < layer_IDs.length; i++){
           var ID = layer_IDs[i];
-          if (ID === selected_layer){
+          if (ID === selected_layer){ //TRY CHANGING THIS TO FEATURE STATE
             map.setPaintProperty(selected_layer, 'fill-opacity', 0.65);
           }
         }
         map.setPaintProperty(active_layer, 'fill-opacity', 0);
+
+
+        //change color of 3-D layer
+        var features = map.queryRenderedFeatures(e.point, {layers: [selected_layer]}); //returns an array of objects
+        var gridcodeNum = features[0].properties.gridcode;
+        var buildingColor = detGridColor(gridcodeNum);
+        map.setPaintProperty('3d-buildings', 'fill-extrusion-color', buildingColor);
+
+
 		    document.getElementById('active-timestamp').innerText = time_selection + 1; //changes number next to timestamp
 
+
+  });
+
+
+function detGridColor(gridNum){
+  var newColor = "";
+  switch (true){
+    case gridNum<timeSeriesStops[0]:
+        newColor = timeSeriesColors[0];
+        break;
+    case gridNum<timeSeriesStops[1]:
+      newColor = timeSeriesColors[1];
+      break;
+    case gridNum<timeSeriesStops[2]:
+      newColor = timeSeriesColors[2];
+      break;
+    case gridNum<timeSeriesStops[3]:
+      newColor = timeSeriesColors[3];
+      break;
+    case gridNum>=timeSeriesStops[3]:
+      newColor = timeSeriesColors[4];
+      break;
+  }
+  return newColor;
+}
+
+
+//changes legend color bar values
+  document.getElementById('CtoFconverter').addEventListener("click", function(){
+    if (document.getElementsByName('CtoFbutton')[0].checked){
+      document.getElementById("tempClass1").innerHTML = "7";
+      document.getElementById("tempClass2").innerHTML = "12";
+      document.getElementById("tempClass3").innerHTML = "17";
+      document.getElementById("tempClass4").innerHTML = "22";
+      document.getElementById("tempClass5").innerHTML = "27";
+    }
+    else{
+      document.getElementById("tempClass1").innerHTML = "44.6";
+      document.getElementById("tempClass2").innerHTML = "53.6";
+      document.getElementById("tempClass3").innerHTML = "62.6";
+      document.getElementById("tempClass4").innerHTML = "71.6";
+      document.getElementById("tempClass5").innerHTML = "80.6";
+
+
+
+    }
   });
 
 //Makes the legend vidible or hidden
@@ -157,7 +280,6 @@ map.on('load', function() {
       document.getElementById("consoleControl").style.left = "20px";
       document.getElementById("ccText").innerHTML = "Show";
       consoleStatus = "hidden";
-
     }
     //otherwise, make visible and move button back
     else{
@@ -165,24 +287,37 @@ map.on('load', function() {
       document.getElementById("console").style.visibility = "visible";
       document.getElementById("ccText").innerHTML = "Hide";
       consoleStatus = "visible";
+
     }
   });
 
+  //Change mouse cursor from pointer to arrow
+  map.getCanvas().style.cursor = 'default';
 
 
 //Gets value of cell hovered over
-	map.on('mousemove', 'time-series1' , function (e) {
+	map.on('mousemove', 'time-series1' , function (e) { //'time-series1' is arbitrary
 
     //Gets value for active layer
     var active_layer = 'time-series' + document.getElementById('active-timestamp').innerText;
     //Gets value for all layers
     for (var i = 0; i < layer_IDs.length; i++){
+      var visibleValue;
       var current_layer = 'time-series' + (i+1);
       var divID = 'hover-cell-' + (i+1);
       var features = map.queryRenderedFeatures(e.point, {layers: [current_layer]}); //returns an array of objects
       var cell_value = features[0].properties.gridcode; //accesses gridcode object
-      var adjustedValue = (cell_value/1000000).toFixed(2); //Map specific calculation
-      var visibleValue = adjustedValue + "&#8451;"; //map specific calculation
+      var adjustedValue = (cell_value/100000 - 273.15); //Map specific calculation
+      var Cvalue = adjustedValue.toFixed(2) + "&deg;C"; //puts together celcius
+      var Fvalue = (adjustedValue*1.8 + 32).toFixed(2) + "&deg;F"; //puts together farenheight
+
+      // sets the dynamic values to celcius or farenheight
+      if (document.getElementsByName('CtoFbutton')[0].checked){
+        visibleValue = Cvalue;
+      }
+      else{
+        visibleValue = Fvalue;
+      }
       document.getElementById(divID).innerHTML = visibleValue;
 
 
@@ -221,8 +356,39 @@ map.on('load', function() {
 
     }
 
-
 	});
+
+//potentially find another way to structure this??
+// loop though layers until you find the active one (opacity = 0.65)
+//the find map.on mousemove e.point set opacity = 1
+//then on map.on mouseleave e.point set opacity = 0.65
+//you might be able to do this inside the for loop (look it over)
+
+map.on('mousemove', 'time-series1', function (e) {
+for (var i = 0; i < layer_IDs.length; i++){
+  var features = map.queryRenderedFeatures(e.point, {layers: [layer_IDs[i]]}); //returns an array of objects
+  var fillOpacity = features[0].layer.paint['fill-opacity'];
+    if (fillOpacity === 0.65){
+
+      map.setFeatureState({
+        source: 'timeseries4',
+        sourceLayer: "ts4-7g9v1j", //just for series 4
+        id: e.features[0].id},
+        {hover: true});
+
+
+        /*{source:
+        [ 'timeseries4',
+          {
+            'type': 'vector',
+            'url': 'mapbox://noah-b.4yn5k62z'
+          }], id: e.features[0].id }, { 'hover': true});
+*/
+    }
+  }
+});
+
+
 });
 
 

@@ -23,10 +23,10 @@ var stops =
 
 var timeSeriesStops =
   [
-    28500000,
-    29000000,
-    29500000,
-    30000000
+    28515000,
+    29015000,
+    29515000,
+    30015000
   ];
 
 var timeSeriesColors =
@@ -37,9 +37,26 @@ var timeSeriesColors =
   "#b30000"
   ];
 
+//Colors don't matter, its the 0 at the end which indicate opacity
+var outlineColors =
+["rgba(254,240,217, 0)",
+ "rgba(253,204,138, 0)",
+ "rgba(252,141,89, 0)",
+ "rgba(227,74,51, 0)",
+ "rgba(179,0,0, 0)"];
+
 
 const dataPaint = {
-  'fill-opacity' : 0,
+  'fill-outline-color': [
+     "step",
+    ["get", "gridcode"],
+    outlineColors[0], timeSeriesStops[0],
+    outlineColors[1], timeSeriesStops[1],
+    outlineColors[2], timeSeriesStops[2],
+    outlineColors[3], timeSeriesStops[3],
+    outlineColors[4]
+  ],
+
   'fill-color': [
       "step",
       ["get", "gridcode"],
@@ -50,7 +67,17 @@ const dataPaint = {
       timeSeriesColors[3], timeSeriesStops[3],
       timeSeriesColors[4]
 
-  ]
+  ],
+
+'fill-opacity':
+ ["case",
+      ["boolean", ["feature-state", "hover"], false],
+      1,
+      0
+    ] //need to set everything to 0 at start or add a third case
+
+
+//  'fill-opacity': 0
 };
 
 
