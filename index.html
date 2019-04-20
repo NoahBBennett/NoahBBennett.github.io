@@ -203,6 +203,7 @@ var labelLayerId;
         var selected_layer = "time-series" + (time_selection + 1); //selected_layer gets layer ID
         var active_layer = 'time-series' + document.getElementById('active-timestamp').innerText; // layer that is completely visible
 
+        document.getElementById('active-timestamp').innerText = time_selection + 1; //changes number next to timestamp
 
 
         for (var i = 0; i < layer_IDs.length; i++){
@@ -212,7 +213,7 @@ var labelLayerId;
           }
         }
         map.setPaintProperty(active_layer, 'fill-opacity', 0);
-
+        console.log(active_layer);
 
         //change color of 3-D layer
         //Need to loop through and change every grid id to its own color
@@ -239,7 +240,6 @@ var labelLayerId;
         map.setPaintProperty('3d-buildings', 'fill-extrusion-color', buildingColor);
 
 
-		    document.getElementById('active-timestamp').innerText = time_selection + 1; //changes number next to timestamp
 
 
   });
