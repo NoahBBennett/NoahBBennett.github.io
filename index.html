@@ -126,6 +126,7 @@ var labelLayerId;
 
    firstSymbolId = 'waterway-label';
    /* USE IF DIFFERENT BACKGROUND LAYER
+      DONT TAKE OUT WHEN CLEANING
 
    for (var i = 0; i < layers.length; i++) {
      console.log(layers[i].type);
@@ -181,7 +182,7 @@ var labelLayerId;
             15, 0,
             15.05, ["get", "min_height"]
             ],
-            'fill-extrusion-opacity': 0.92,
+            'fill-extrusion-opacity': 0.85,
 
             }
       }, firstSymbolId);
@@ -214,7 +215,25 @@ var labelLayerId;
 
 
         //change color of 3-D layer
+        //Need to loop through and change every grid id to its own color
+        var buildingLayer = '3d-buildings';
         var features = map.queryRenderedFeatures(e.point, {layers: [selected_layer]}); //returns an array of objects
+        var features1 = map.queryRenderedFeatures(e.point, {layers: ['3d-buildings']}); //returns an array of objects
+
+        var myFeatures = map.querySourceFeatures('composite',
+     {
+         sourceLayer: 'building',
+        // i'm confident there is data matching this filter
+         filter: ["==", "type", "feature"]
+     }
+     );
+     console.log(features1[0]._vectorTileFeature._x); //
+     console.log(myFeatures);
+      //  FIND SOMEWAY TO SEE THE BUILDING ARRAY
+        //for (var i = 0; i < features.length; i++){
+            //gridcodeNum = features[i].properties.gridcode;
+
+    //  }
         var gridcodeNum = features[0].properties.gridcode;
         var buildingColor = detGridColor(gridcodeNum);
         map.setPaintProperty('3d-buildings', 'fill-extrusion-color', buildingColor);
@@ -364,6 +383,7 @@ function detGridColor(gridNum){
 //then on map.on mouseleave e.point set opacity = 0.65
 //you might be able to do this inside the for loop (look it over)
 
+/*
 map.on('mousemove', 'time-series1', function (e) {
 for (var i = 0; i < layer_IDs.length; i++){
   var features = map.queryRenderedFeatures(e.point, {layers: [layer_IDs[i]]}); //returns an array of objects
@@ -376,17 +396,10 @@ for (var i = 0; i < layer_IDs.length; i++){
         id: e.features[0].id},
         {hover: true});
 
-
-        /*{source:
-        [ 'timeseries4',
-          {
-            'type': 'vector',
-            'url': 'mapbox://noah-b.4yn5k62z'
-          }], id: e.features[0].id }, { 'hover': true});
-*/
     }
   }
 });
+*/
 
 
 });
