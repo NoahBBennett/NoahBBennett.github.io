@@ -23,27 +23,18 @@ var stops =
 
 var timeSeriesStops =
   [
-    0,
-    2,
-    4,
-    6,
-    8,
-    10,
-    12,
-    15,
-    20
+    28515000,
+    29015000,
+    29515000,
+    30015000
   ];
 
 var timeSeriesColors =
-  ['#fff7fb',
-'#ece7f2',
-'#d0d1e6',
-'#a6bddb',
-'#74a9cf',
-'#3690c0',
-'#0570b0',
-'#045a8d',
-'#023858'
+  ["#fef0d9",
+  "#fdcc8a",
+  "#fc8d59",
+  "#e34a33",
+  "#b30000"
   ];
 
 //Colors don't matter, its the 0 at the end which indicate opacity
@@ -52,41 +43,29 @@ var outlineColors =
  "rgba(253,204,138, 0)",
  "rgba(252,141,89, 0)",
  "rgba(227,74,51, 0)",
- "rgba(179,0,0, 0)",
-"rgba(179,0,0, 0)",
-"rgba(179,0,0, 0)",
-"rgba(179,0,0, 0)",
-"rgba(179,0,0, 0)"];
+ "rgba(179,0,0, 0)"];
 
 
 const dataPaint = {
   'fill-outline-color': [
      "step",
-    ["get", "temp"],
+    ["get", "gridcode"],
     outlineColors[0], timeSeriesStops[0],
     outlineColors[1], timeSeriesStops[1],
     outlineColors[2], timeSeriesStops[2],
     outlineColors[3], timeSeriesStops[3],
-    outlineColors[4], timeSeriesStops[4],
-    outlineColors[5], timeSeriesStops[5],
-    outlineColors[6], timeSeriesStops[6],
-    outlineColors[7], timeSeriesStops[7],
-    outlineColors[8]
+    outlineColors[4]
   ],
 
   'fill-color': [
       "step",
-      ["get", "temp"],
+      ["get", "gridcode"],
 
       timeSeriesColors[0], timeSeriesStops[0],
       timeSeriesColors[1], timeSeriesStops[1],
       timeSeriesColors[2], timeSeriesStops[2],
       timeSeriesColors[3], timeSeriesStops[3],
-      timeSeriesColors[4], timeSeriesStops[4],
-      timeSeriesColors[5], timeSeriesStops[5],
-      timeSeriesColors[6], timeSeriesStops[6],
-      timeSeriesColors[7], timeSeriesStops[7],
-      timeSeriesColors[8]
+      timeSeriesColors[4]
 
   ],
 /*
@@ -109,7 +88,7 @@ const mapLayers = [
       'id': 'time-series1',
       'type': 'fill',
       'source': 'timeseries1',
-      'source-layer': 'Wind_d04_asc_v5_timestep20h_F-5j1yb7',
+      'source-layer': 'ts1-9js4ib',
       'paint': dataPaint,
       'layout': {}
 
@@ -118,7 +97,7 @@ const mapLayers = [
     'id': 'time-series2',
     'type': 'fill',
     'source': 'timeseries2',
-    'source-layer': 'Wind_d04_asc_v5_timestep21h_F-1qsa9z',
+    'source-layer': 'ts2-5ap9rr',
     'paint': dataPaint,
     'layout': {}
   }],
@@ -126,7 +105,7 @@ const mapLayers = [
     'id': 'time-series3',
     'type': 'fill',
     'source': 'timeseries3',
-    'source-layer': 'Wind_d04_asc_v5_timestep22h_F-56d61z',
+    'source-layer': 'ts3-dwe7hq',
     'paint': dataPaint,
     'layout': {}
   }],
@@ -134,7 +113,7 @@ const mapLayers = [
     'id': 'time-series4',
     'type': 'fill',
     'source': 'timeseries4',
-    'source-layer': 'Wind_d04_asc_v5_timestep23h_F-226th3',
+    'source-layer': 'ts4-7g9v1j',
     'paint': dataPaint,
     'layout': {}
   }],
@@ -142,10 +121,9 @@ const mapLayers = [
     'id': 'time-series5',
     'type': 'fill',
     'source': 'timeseries5',
-    'source-layer': 'Wind_d04_asc_v5_timestep24h_F-9z2suy',
+    'source-layer': 'ts5-d2ylke',
     'paint': dataPaint,
     'layout': {}
   }]
-
 
 ];

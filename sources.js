@@ -3,7 +3,7 @@ const mapSources = [
     'timeseries1',
     {
       'type': 'vector',
-      'url': 'mapbox://noah-b.bc036g92' //wind20
+      'url': 'mapbox://noah-b.9r6f3lvc'
     }
   ],
 
@@ -11,7 +11,7 @@ const mapSources = [
     'timeseries2',
     {
       'type': 'vector',
-      'url': 'mapbox://noah-b.64ovodv3'
+      'url': 'mapbox://noah-b.ay8namnf'
     }
   ],
 
@@ -19,7 +19,7 @@ const mapSources = [
     'timeseries3',
     {
       'type': 'vector',
-      'url': 'mapbox://noah-b.d9gwk7kl'
+      'url': 'mapbox://noah-b.24q99525'
     }
   ],
 
@@ -27,7 +27,7 @@ const mapSources = [
     'timeseries4',
     {
       'type': 'vector',
-      'url': 'mapbox://noah-b.dxn313nd'
+      'url': 'mapbox://noah-b.4yn5k62z'
     }
   ],
 
@@ -35,7 +35,14 @@ const mapSources = [
     'timeseries5',
     {
       'type': 'vector',
-      'url': 'mapbox://noah-b.5y5tpzsd'
+      'url': 'mapbox://noah-b.4qepjc1w'
+    }
+  ],
+  [
+    'hoverSource',
+    {
+      'type': 'vector',
+      'url': 'mapbox://noah-b.80v5d5mj'
     }
   ]
 

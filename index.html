@@ -105,8 +105,8 @@ map.on('load', function() {
 
   var layers = map.getStyle().layers;
   var layer_IDs = [];
-  var maxValue = 25; //this should change for each dataset
-  var minValue = 0; //this should change for each dataset
+  var maxValue = 32.8; //this should change for each dataset
+  var minValue = 9; //this should change for each dataset
   var barWidth = 100; //measured in px, should change if legend is changed
 
 
@@ -158,6 +158,26 @@ var labelLayerId;
         layer_IDs.push(obj.id); //adds names of all layers to an array
       });
 
+
+
+      map.addLayer({
+        'id': 'hoverLayer',
+        'type': 'fill',
+        'source': 'hoverSource',
+        'source-layer': 'AirTempBack-3uihd8',
+        'paint': {
+        'fill-color': 'black',
+        'fill-opacity':
+         ["case",
+              ["boolean", ["feature-state", "hover"], false],
+              0.5,
+              0
+            ],
+        'fill-outline-color': 'rgba(254, 240, 217, 0)'
+      },
+        'layout': {}
+
+      });
 
 
       map.addLayer({
@@ -237,7 +257,7 @@ var labelLayerId;
             //gridcodeNum = features[i].properties.gridcode;
 
     //  }
-        var gridcodeNum = features[0].properties.temp;
+        var gridcodeNum = features[0].properties.gridcode;
         var buildingColor = detGridColor(gridcodeNum);
         map.setPaintProperty('3d-buildings', 'fill-extrusion-color', buildingColor);
 
@@ -262,20 +282,8 @@ function detGridColor(gridNum){
     case gridNum<timeSeriesStops[3]:
       newColor = timeSeriesColors[3];
       break;
-    case gridNum<timeSeriesStops[4]:
+    case gridNum>=timeSeriesStops[3]:
       newColor = timeSeriesColors[4];
-      break;
-    case gridNum<timeSeriesStops[5]:
-      newColor = timeSeriesColors[5];
-      break;
-    case gridNum<timeSeriesStops[6]:
-      newColor = timeSeriesColors[6];
-      break;
-    case gridNum<timeSeriesStops[7]:
-      newColor = timeSeriesColors[7];
-      break;
-    case gridNum>=timeSeriesStops[7]:
-      newColor = timeSeriesColors[8];
       break;
   }
   return newColor;
@@ -339,10 +347,9 @@ function detGridColor(gridNum){
       var current_layer = 'time-series' + (i+1);
       var divID = 'hover-cell-' + (i+1);
       var features = map.queryRenderedFeatures(e.point, {layers: [current_layer]}); //returns an array of objects
-      var cell_value = features[0].properties.temp; //accesses gridcode object
-      console.log(cell_value);
-      var adjustedValue = cell_value; //Map specific calculation
-      var Cvalue = adjustedValue.toFixed(2) + "mph"; //puts together celcius
+      var cell_value = features[0].properties.gridcode; //accesses gridcode object
+      var adjustedValue = (cell_value/100000 - 273.15); //Map specific calculation
+      var Cvalue = adjustedValue.toFixed(2) + "&deg;C"; //puts together celcius
       var Fvalue = (adjustedValue*1.8 + 32).toFixed(2) + "&deg;F"; //puts together farenheight
 
       // sets the dynamic values to celcius or farenheight
@@ -376,20 +383,8 @@ function detGridColor(gridNum){
         case cell_value<timeSeriesStops[3]:
           newColor = timeSeriesColors[3];
           break;
-        case cell_value<timeSeriesStops[4]:
+        case cell_value>=timeSeriesStops[3]:
           newColor = timeSeriesColors[4];
-          break;
-        case cell_value<timeSeriesStops[5]:
-          newColor = timeSeriesColors[5];
-          break;
-        case cell_value<timeSeriesStops[6]:
-          newColor = timeSeriesColors[6];
-          break;
-        case cell_value<timeSeriesStops[7]:
-          newColor = timeSeriesColors[7];
-          break;
-        case cell_value>=timeSeriesStops[7]:
-          newColor = timeSeriesColors[8];
           break;
       }
       document.getElementById(barID).style.backgroundColor = newColor;
@@ -409,6 +404,45 @@ function detGridColor(gridNum){
 //the find map.on mousemove e.point set opacity = 1
 //then on map.on mouseleave e.point set opacity = 0.65
 //you might be able to do this inside the for loop (look it over)
+
+
+
+var prevHoverID = 0;
+map.on('mousemove', 'time-series1', function (e) {
+
+  var features = map.queryRenderedFeatures(e.point, 'hoverLayer'); //returns an array of objects
+
+  //checks to make sure we are grabbing the right info
+  if (features[0].layer.id != "hoverLayer"){
+    console.log("Wrong feature for hover"); //Leave this in
+  }
+  console.log(e.features[0].id);
+
+      //unhighlight old cell
+      map.setFeatureState({
+        source: 'hoverSource',
+        sourceLayer: 'AirTempBack-3uihd8',
+        id: prevHoverID },
+        {hover: false}
+      );
+
+      //higlight new cell
+      map.setFeatureState({
+        source: 'hoverSource',
+        sourceLayer: "AirTempBack-3uihd8",
+        id: e.features[0].id},
+        {hover: true}
+      );
+
+
+      prevHoverID = e.features[0].id;
+
+
+});
+
+
+
+
 
 /*
 map.on('mousemove', 'time-series1', function (e) {
